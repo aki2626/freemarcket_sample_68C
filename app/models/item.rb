@@ -8,6 +8,7 @@ class Item < ApplicationRecord
   belongs_to_active_hash :a_category
 
   belongs_to :user
+
   # belongs_to :category
   # category関係が終わった際に追加 永井
   
@@ -20,7 +21,9 @@ class Item < ApplicationRecord
   validates :owners_area_id,      presence: true
   validates :arrival_date_id,     presence: true
   validates :explain,             presence: true
-  validates :a_category_id,       presence: true
+
+  belongs_to :category
+
 
 
   validates :price,              numericality: { only_integer: true,
@@ -47,7 +50,7 @@ class Item < ApplicationRecord
   has_many :item_images, dependent: :destroy
 
 
-  # item削除時にimageも削除される
+  # item削除時にimageも削除される (Itemテーブル内のものとして扱われる)
   accepts_nested_attributes_for :item_images, allow_destroy: true  
   validates :item_images,       presence: true
 

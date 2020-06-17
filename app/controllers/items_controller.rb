@@ -35,8 +35,28 @@ class ItemsController < ApplicationController
       # データの作成時点で、@itemにIDをが付与されている
       redirect_to @item
     else
-      render :new
+
+      # render :new   この記述だと2回送信しないとエラー表示が出ない
+      redirect_to new_item_path
       flash[:notice] = @item.errors.full_messages
+      # 再入力時に前回のデータを記憶 (#newのflashで受け取り)
+      flash[:item] = @item
+      flash[:notice] = @item.errors.full_messages
+
+      if params[:parent_id] !=""
+        @parentId = params[:parent_id]
+        @category_children = Category.find(params[:parent_id]).children
+        unless params[:children_id] ==""
+          unless params[:children_id] =="---"
+            @childrenId = params[:children_id]
+            @category_grandchildren = Category.find(params[:children_id]).children
+            @grandchildrenId = params[:item][:category_id]
+          end
+        end
+      end
+
+      # 上方でredirect_to new_item_pathが呼び出されているのでおそらく不要。エラー出る(田村)
+      # render :new
     end
   end
 
@@ -57,9 +77,29 @@ class ItemsController < ApplicationController
   # 商品情報更新機能 (田村)
   def update
     if @item.update(item_params)
+      flash[:notice] = "
+      「#{@item.name}」を編集しました"
+      # データの作成時点で、@itemにIDをが付与されているから、@itemでも良さそう
       redirect_to item_path
     else
-      render :edit
+      redirect_to edit_item_path
+      flash[:notice] = @item.errors.full_messages
+      # if params[:parent_id] !=""
+      #   @parentId = params[:parent_id]
+      #   @category_children = Category.find(params[:parent_id]).children
+      #   unless params[:children_id] ==""
+      #     unless params[:children_id] =="---"
+      #       @childrenId = params[:children_id]
+      #       @category_grandchildren = Category.find(params[:children_id]).children
+      #       @grandchildrenId = params[:item][:category_id]
+      #     end
+      #   end
+      # end
+      @parentId = params[:parent_id]
+      @childrenId = params[:children_id]
+      @grandchildrenId = params[:item][:category_id]
+      @category_children = Category.find(params[:parent_id]).children
+      @category_grandchildren = Category.find(params[:children_id]).children
     end
   end
 
