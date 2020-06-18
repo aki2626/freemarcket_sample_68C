@@ -30,3 +30,10 @@ public/uploads/*
 .DS_Store
 
 /.env
+.vscode
+.idea
+# Ignore application configuration
+/config/application.yml
+/vendor/bundle/*
+/ssl/
+/memo.txt
