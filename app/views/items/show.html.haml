@@ -30,7 +30,7 @@
         =link_to item_path, method: :delete, class:"main__destroy" do
           商品の削除
       -if user_signed_in? && current_user.id != @item.user_id
-        =link_to "/purchase/#{@item.id}", class:"main__buy" do
+        =link_to purchase_path(@item), class:"main__buy" do
           購入画面に進む
 
 
